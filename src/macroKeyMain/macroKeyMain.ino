@@ -1,5 +1,22 @@
-void setup() {
+#define ENPIN A1
+#define ROTBUT A2
+#define LCDSER 10
+#define EN_CLK 2
+#define EN_DAT A3
 
+
+int rows[] = {3,7,8,9};
+int cols[] = {4,5.6};
+
+void setup() {
+  //Setup rows as outputs
+  //Setup cols as inputs
+  //Setup ENPIN as input
+  //Setup ROTBUT as input
+  //Setup ENCLK and ENDAT as inputs
+  
+  //Start software serial with LCDSER
+  //Attach interrupt to ENCLK
 }
 
 void loop() {

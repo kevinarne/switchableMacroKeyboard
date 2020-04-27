@@ -7,6 +7,7 @@
 #define EN_BUT A2  //Button on rotary encoder
 #define EN_CLK 2 //Clock on rotary encoder
 #define EN_DAT A3 //Data on rotary encoder
+#define EN_POS 1 //Number of keyboards to rotate between
 
 #define KEY_DELAY 30 //In millis
 #define EN_DELAY 30 //In millis
@@ -19,7 +20,7 @@ SoftwareSerial lcdSerial (A0, LCD_SER);  //RX, TX
 
 unsigned long lastSwitch = 0;
 unsigned long lastRotation = 0;
-
+int enPosition = 0;
 
 //rows and cols are the pins associated with the rows and columns of switches
 int rows[] = {3,7,8,9};
@@ -74,7 +75,7 @@ void setup() {
 void loop() {
   keyboardScan();
   //Send buttons to be sent
-
+  
   //Set buttons to be sent to false
   
   //if rotary encoder debouncing done

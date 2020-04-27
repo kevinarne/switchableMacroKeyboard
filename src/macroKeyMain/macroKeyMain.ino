@@ -1,3 +1,5 @@
+#include <SoftwareSerial.h>
+
 #define ENA_PIN A1 //Enable pin that disables keyboard output
 #define LCD_SER 10 //Pin for the software serial communication to the LCD panel
 
@@ -8,6 +10,9 @@
 #define KEY_DELAY 30 //In millis
 #define EN_DELAY 30 //In millis
 #define SWITCH_DELAY 30 //In millis
+
+
+SoftwareSerial lcdSerial (A0, LCD_SER);  //RX, TX
 
 //Need variables to store relevant states for rotary encoder
 
@@ -57,12 +62,16 @@ void setup() {
 
   
   //Start software serial with LCDSER
+  lcdSerial.begin(9600);
+  
+  
   //Attach interrupt to ENCLK
 }
 
 void loop() {
   keyboardScan();
   //Send buttons to be sent
+
   //Set buttons to be sent to false
   
   //if rotary encoder debouncing done

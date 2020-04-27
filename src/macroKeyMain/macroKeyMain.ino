@@ -1,4 +1,5 @@
 #include <SoftwareSerial.h>
+#include <Keyboard.h>
 
 #define ENA_PIN A1 //Enable pin that disables keyboard output
 #define LCD_SER 10 //Pin for the software serial communication to the LCD panel
@@ -66,6 +67,8 @@ void setup() {
   
   
   //Attach interrupt to ENCLK
+
+  Keyboard.begin();
 }
 
 void loop() {

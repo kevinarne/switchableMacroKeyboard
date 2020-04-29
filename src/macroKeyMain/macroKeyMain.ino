@@ -65,7 +65,8 @@ void setup() {
   
   //Start software serial with LCDSER
   lcdSerial.begin(9600);
-  
+
+  Serial.begin(9600);
   
   //Attach interrupt to ENCLK
 
@@ -74,8 +75,15 @@ void setup() {
 
 void loop() {
   keyboardScan();
-  //Send buttons to be sent
-  
+  //Check enable pin
+  int enabled = digitalRead(ENA_PIN);
+  if (enabled){
+    //Send buttons to be sent to keyboard
+    Serial.println("Enabled");
+  } else {
+    Serial.println("Disabled");
+    //Send buttons to serial  
+  }
   //Set buttons to be sent to false
   
   //if rotary encoder debouncing done
@@ -110,4 +118,8 @@ void keyboardScan(){
     //Set row to low
     digitalWrite(rows[r], LOW);
   }
+}
+
+void printMatrixSerial(){
+  
 }

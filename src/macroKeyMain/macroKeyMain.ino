@@ -103,6 +103,14 @@ void keyboardScan(){
       //Update matrix of pressed buttons
       if (value){
         //Check the previous value
+        if (pressed[r][c]){
+          //Do nothing?
+        } else {
+          //Set pressed to true
+          pressed[r][c] = true;
+          //set last pressed to millis()
+            
+        }
         //If already pressed: don't update last pressed
         //else, do update last pressed 
           //Update to be sent

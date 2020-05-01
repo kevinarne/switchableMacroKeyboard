@@ -22,6 +22,11 @@ boolean toBeSent[4][3] = {{false,false,false},
                          {false,false,false},
                          {false,false,false}};
 
+String keys[4][3] = {{"7","8","9"},
+                     {"4","5","6"},
+                     {"1","2","3"},
+                     {"-","0","."}};
+
 void setup() {
   //Setup rows as outputs
   for (int i = 0; i < 4; i++){
@@ -38,7 +43,8 @@ void setup() {
 
 void loop() {
   keyboardScan();
-  printMatrixSerial();
+  //printMatrixSerial();
+  sendKeys();
   delay(KEY_DELAY);
 }
 
@@ -81,7 +87,21 @@ void keyboardScan(){
   }
 }
 
+
+void sendKeys(){
+  //Iterate through rows and cols
+  for (int r = 0; r < 4; r++){
+    for (int c = 0; c < 3; c++){
+      if (toBeSent[r][c]){
+        Serial.println(keys[r][c]);
+        toBeSent[r][c] = false;
+      }  
+    }  
+  }  
+}
+
 void printMatrixSerial(){
+  Serial.println("Pressed matrix:");
   for (int r = 0; r < 4; r++){
     for (int c = 0; c < 3; c++){
       Serial.print(pressed[r][c]);

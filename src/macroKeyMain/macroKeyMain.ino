@@ -44,6 +44,11 @@ boolean toBeSent[4][3] = {{false,false,false},
                          {false,false,false},
                          {false,false,false}};
 
+String keys[4][3] = {{"7","8","9"},
+                     {"4","5","6"},
+                     {"1","2","3"},
+                     {"-","0","."}};
+
 void setup() {
   //Setup rows as outputs
   for (int i = 0; i < 4; i++){
@@ -101,34 +106,51 @@ void keyboardScan(){
       //Read each column
       int value = digitalRead(cols[c]);
       //Update matrix of pressed buttons
-      if (value){
+      if (value){ //Button is pressed
         //Check the previous value
-        if (pressed[r][c]){
-          //Do nothing?
-        } else {
+        if (pressed[r][c]){ //If button previously pressed
+          //Don't update last pressed
+        } else { //Button was not previously pressed
           //Set pressed to true
           pressed[r][c] = true;
           //set last pressed to millis()
-            
+          lastPressed[r][c] = millis();
+          //Set flag for the value to be sent
+          toBeSent[r][c] = true;
         }
-        //If already pressed: don't update last pressed
-        //else, do update last pressed 
-          //Update to be sent
-      }else{
-        //Check the previous value
-        //If already pressed
-          //Check time elapsed
-          //Set to false if time elapsed is long enough
-      }
+      }else{ //The button is not pressed
+        if (pressed[r][c]){ //Button was previously pressed
+            //timeExpired is true if enough time has passed since the last pressing
+            //Or if the clock has reset
+            boolean timeExpired = !(millis()-lastPressed[r][c] < KEY_DELAY);
             
-      //Else: update last pressed value for that spot. last pressed = millis()
+            if (timeExpired){ //Enough time has elapsed since it was pressed
+              //Set the pressed value back to false
+              pressed[r][c] = false;
+            }
+         }
+      }            
     }
     //Set row to low
     digitalWrite(rows[r], LOW);
   }
 }
 
+
+void sendKeys(){
+  //Iterate through rows and cols
+  for (int r = 0; r < 4; r++){
+    for (int c = 0; c < 3; c++){
+      if (toBeSent[r][c]){
+        Serial.println(keys[r][c]);
+        toBeSent[r][c] = false;
+      }  
+    }  
+  }  
+}
+
 void printMatrixSerial(){
+  Serial.println("Pressed matrix:");
   for (int r = 0; r < 4; r++){
     for (int c = 0; c < 3; c++){
       Serial.print(pressed[r][c]);

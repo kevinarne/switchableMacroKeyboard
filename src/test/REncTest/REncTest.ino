@@ -1,4 +1,5 @@
 //Testing for the rotary encoder dial and switch
+//Valuable resource for understanding rotary encoders: https://lastminuteengineers.com/rotary-encoder-arduino-tutorial/
 
 #define EN_BUT A2 //Button on rotary encoder
 #define EN_CLK 2 //Clock on rotary encoder
@@ -36,6 +37,7 @@ void loop() {
   Serial.println(enPosition);
 }
 
+//Function for the interrupt
 void readEncoder(){
   //Read values
   currentClk = digitalRead(EN_CLK);
@@ -44,10 +46,15 @@ void readEncoder(){
   //Check last switched time
   if (!(millis() - lastRotation < EN_DELAY)){
     //Determine which direction it moved
-    enPosition++;
-    //change enPosition
+    if (currentClk == currentDat){ //Counter clockwise
+      enPosition--;
+    }else{ //Clockwise
+      enPosition++;
+    }
+
     lastRotation = millis();
   } 
+  
   //Set to prev to current
   prevClk = currentClk;
   prevDat = prevDat;

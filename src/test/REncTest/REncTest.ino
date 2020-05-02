@@ -5,7 +5,7 @@
 #define EN_DAT A3 //Data on rotary encoder
 #define EN_POS 1 //Number of keyboards to rotate between
 
-#define EN_DELAY 30 //In millis
+#define EN_DELAY 200 //In millis
 #define SWITCH_DELAY 30 //In millis
 
 unsigned long lastSwitch = 0;
@@ -46,6 +46,7 @@ void readEncoder(){
     //Determine which direction it moved
     enPosition++;
     //change enPosition
+    lastRotation = millis();
   } 
   //Set to prev to current
   prevClk = currentClk;

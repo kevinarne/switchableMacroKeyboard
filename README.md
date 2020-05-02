@@ -7,3 +7,5 @@ Steps to bring board up:
 * Test rotary encoder position changes
 * Add a second keyboard
 * Test keyboard output correct when rotating between keyboards
+
+Note: Must use Arduino Leonardo for loading code from the Arduino IDE

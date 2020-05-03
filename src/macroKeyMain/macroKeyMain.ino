@@ -20,7 +20,13 @@ SoftwareSerial lcdSerial (A0, LCD_SER);  //RX, TX
 
 unsigned long lastSwitch = 0;
 unsigned long lastRotation = 0;
-int enPosition = 0;
+volatile int enPosition = 0;
+boolean prevClk = false;
+boolean prevDat = false;
+
+boolean currentClk = false;
+boolean currentDat = false;
+
 
 //rows and cols are the pins associated with the rows and columns of switches
 int rows[] = {3,7,8,9};
@@ -74,8 +80,8 @@ void setup() {
   Serial.begin(9600);
   
   //Attach interrupt to ENCLK
-
-  Keyboard.begin();
+  attachInterrupt(INT1, readEncoder,CHANGE);
+  
 }
 
 void loop() {
@@ -84,7 +90,7 @@ void loop() {
   int enabled = digitalRead(ENA_PIN);
   if (enabled){
     //Send buttons to be sent to keyboard
-    Serial.println("Enabled");
+    sendKeys();  
   } else {
     Serial.println("Disabled");
     //Send buttons to serial  
@@ -158,4 +164,27 @@ void printMatrixSerial(){
     } 
     Serial.println(""); 
   }
+}
+
+//Function for the interrupt
+void readEncoder(){
+  //Read values
+  currentClk = digitalRead(EN_CLK);
+  currentDat = digitalRead(EN_DAT);
+  
+  //Check last switched time
+  if (!(millis() - lastRotation < EN_DELAY) && currentClk){
+    //Determine which direction it moved
+    if (currentClk == currentDat){ //Counter clockwise
+      enPosition--;
+    }else{ //Clockwise
+      enPosition++;
+    }
+
+    lastRotation = millis();
+  } 
+  
+  //Set to prev to current
+  prevClk = currentClk;
+  prevDat = prevDat;
 }

@@ -6,7 +6,7 @@
 #define EN_DAT A3 //Data on rotary encoder
 #define EN_POS 1 //Number of keyboards to rotate between
 
-#define EN_DELAY 200 //In millis
+#define EN_DELAY 50 //In millis
 #define SWITCH_DELAY 30 //In millis
 
 unsigned long lastSwitch = 0;
@@ -44,7 +44,7 @@ void readEncoder(){
   currentDat = digitalRead(EN_DAT);
   
   //Check last switched time
-  if (!(millis() - lastRotation < EN_DELAY)){
+  if (!(millis() - lastRotation < EN_DELAY) && currentClk){
     //Determine which direction it moved
     if (currentClk == currentDat){ //Counter clockwise
       enPosition--;

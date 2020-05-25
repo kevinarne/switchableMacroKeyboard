@@ -1,5 +1,6 @@
 #include <SoftwareSerial.h>
 #include <Keyboard.h>
+#include "keyboards.h"
 
 #define ENA_PIN A1 //Enable pin that disables keyboard output
 #define LCD_SER 10 //Pin for the software serial communication to the LCD panel
@@ -148,7 +149,7 @@ void sendKeys(){
   for (int r = 0; r < 4; r++){
     for (int c = 0; c < 3; c++){
       if (toBeSent[r][c]){
-        Serial.println(keys[r][c]);
+        Serial.println(KEYBOARDS[enPosition][r][c]);
         toBeSent[r][c] = false;
       }  
     }  
@@ -175,10 +176,21 @@ void readEncoder(){
   //Check last switched time
   if (!(millis() - lastRotation < EN_DELAY) && currentClk){
     //Determine which direction it moved
-    if (currentClk == currentDat){ //Counter clockwise
+    if (currentClk == currentDat) //Counter clockwise
+    { 
       enPosition--;
-    }else{ //Clockwise
+      if (enPosition < 0) //Check for negative position
+      {
+        enPosition = NUM_KB-1;
+      }
+    }
+    else //Clockwise
+    { 
       enPosition++;
+      if (enPosition >= NUM_KB) //Check for overflow
+      {
+        enPosition = 0;
+      }
     }
 
     lastRotation = millis();

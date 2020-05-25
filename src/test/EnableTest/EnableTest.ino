@@ -1,19 +1,21 @@
-#define ENA_PIN A1 //Enable pin that disables keyboard output
+#define ENA_PIN A1 // Enable pin that disables keyboard output
 
-void setup() {
+void setup() 
+{
   pinMode(ENA_PIN, INPUT);
 
   Serial.begin(9600);
-
 }
 
-void loop() {
+void loop() 
+{
   int enabled = digitalRead(ENA_PIN);
-  if (enabled){
-    //Send buttons to be sent to keyboard
+  if (enabled)
+  {
     Serial.println("Enabled");
-  } else {
+  } 
+  else 
+  {
     Serial.println("Disabled");
-    //Send buttons to serial  
   }
 }

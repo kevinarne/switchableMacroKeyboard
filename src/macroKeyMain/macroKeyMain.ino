@@ -48,20 +48,25 @@ boolean toBeSent[4][3] = {{false,false,false},
                          {false,false,false},
                          {false,false,false}};
                          
-void setup() {
-  //Setup rows as outputs
-  for (int i = 0; i < 4; i++){
+void setup() 
+{
+  // Setup rows as outputs
+  for (int i = 0; i < 4; i++)
+  {
     pinMode(rows[i], OUTPUT);  
   }
   // Setup cols as inputs
-  for (int i = 0; i < 3; i ++){
+  for (int i = 0; i < 3; i ++)
+  {
     pinMode(cols[i], INPUT);  
   }
+  
   // Setup ENA_PIN as input
   pinMode(ENA_PIN, INPUT);
   
   // Setup EN_BUT as input
   pinMode(EN_BUT, INPUT);
+  
   //Setup EN_CLK and EN_DAT as inputs
   pinMode(EN_CLK, INPUT);
   pinMode(EN_DAT, INPUT);
@@ -75,74 +80,94 @@ void setup() {
   Serial.begin(9600);
   
   // Attach interrupt to ENCLK
-  attachInterrupt(INT4, readEncoder,CHANGE);
-  
+  attachInterrupt(INT4, readEncoder, CHANGE);
 }
 
-void loop() {
+void loop() 
+{
+  // Scan for keyboard inputs
   keyboardScan();
-  //Check enable pin
+  // Check enable pin
   int enabled = digitalRead(ENA_PIN);
-  if (enabled){
-    //Send buttons to be sent to keyboard
+  if (enabled)
+  {
+    // Send buttons to be sent to keyboard
     sendKeys();  
-  } else {
+  } 
+  else 
+  {
     Serial.println("Disabled");
-    //Send buttons to serial  
+    // Send buttons to serial?  
   }
   if (encChanged)
   {
-   lcd.clear();
-   lcd.print(KB_NAMES[enPosition]); 
-   encChanged = false;
+    lcd.clear();
+    lcd.print(KB_NAMES[enPosition]); 
+    encChanged = false;
   }
 }
 
-void keyboardScan(){
-  //Iterate through rows
-  for (int r = 0; r < 4; r++){
-    //Set row to high
+void keyboardScan()
+{
+  // Iterate through rows
+  for (int r = 0; r < 4; r++)
+  {
+    // Set row to high
     digitalWrite(rows[r], HIGH);
-    for (int c = 0; c < 3; c++){ //Heh c++
+    for (int c = 0; c < 3; c++) // Heh c++
+    {
       //Read each column
       int value = digitalRead(cols[c]);
-      //Update matrix of pressed buttons
-      if (value){ //Button is pressed
-        //Check the previous value
-        if (pressed[r][c]){ //If button previously pressed
-          //Don't update last pressed
-        } else { //Button was not previously pressed
-          //Set pressed to true
+      // Update matrix of pressed buttons
+      if (value)// Button is pressed
+      {
+        // Check the previous value
+        if (pressed[r][c]) // If button previously pressed
+        {
+          // Don't update last pressed
+        } 
+        else // Button was not previously pressed 
+        { 
+          // Set pressed to true
           pressed[r][c] = true;
-          //set last pressed to millis()
+          // Set last pressed to millis()
           lastPressed[r][c] = millis();
-          //Set flag for the value to be sent
+          // Set flag for the value to be sent
           toBeSent[r][c] = true;
         }
-      }else{ //The button is not pressed
-        if (pressed[r][c]){ //Button was previously pressed
-            //timeExpired is true if enough time has passed since the last pressing
-            //Or if the clock has reset
+      }
+      else // The button is not pressed
+      {
+        if (pressed[r][c]) // Button was previously pressed
+        { 
+            // timeExpired is true if enough time has passed since the last pressing
+            // Or if the clock has reset
             boolean timeExpired = !(millis()-lastPressed[r][c] < KEY_DELAY);
             
-            if (timeExpired){ //Enough time has elapsed since it was pressed
-              //Set the pressed value back to false
+            if (timeExpired) // Enough time has elapsed since it was pressed
+            { 
+              // Set the pressed value back to false
               pressed[r][c] = false;
             }
          }
       }            
     }
-    //Set row to low
+    // Set row to low
     digitalWrite(rows[r], LOW);
   }
 }
 
-
-void sendKeys(){
-  //Iterate through rows and cols
-  for (int r = 0; r < 4; r++){
-    for (int c = 0; c < 3; c++){
-      if (toBeSent[r][c]){
+// Sends the keys that are labelled true in the toBeSent matrix
+// Updates to false once that cell is sent
+void sendKeys()
+{
+  // Iterate through rows and cols
+  for (int r = 0; r < 4; r++)
+  {
+    for (int c = 0; c < 3; c++)
+    {
+      if (toBeSent[r][c])
+      {
         Serial.println(KEYBOARDS[enPosition][r][c]);
         toBeSent[r][c] = false;
       }  
@@ -150,10 +175,15 @@ void sendKeys(){
   }  
 }
 
-void printMatrixSerial(){
+// This function outputs the pressed matrix to the Serial port
+// Meant exclusively for debugging
+void printMatrixSerial()
+{
   Serial.println("Pressed matrix:");
-  for (int r = 0; r < 4; r++){
-    for (int c = 0; c < 3; c++){
+  for (int r = 0; r < 4; r++)
+  {
+    for (int c = 0; c < 3; c++)
+    {
       Serial.print(pressed[r][c]);
       Serial.print("  ");
     } 
@@ -161,38 +191,41 @@ void printMatrixSerial(){
   }
 }
 
-//Function for the interrupt
-void readEncoder(){
-  //Read values
+// Function for the rotary encoder interrupt
+void readEncoder()
+{
+  // Read values
   currentClk = digitalRead(EN_CLK);
   currentDat = digitalRead(EN_DAT);
   
-  //Check last switched time
-  if (!(millis() - lastRotation < EN_DELAY) && currentClk){
-    //Determine which direction it moved
-    if (currentClk == currentDat) //Counter clockwise
+  // Check last switched time
+  if (!(millis() - lastRotation < EN_DELAY) && currentClk)
+  {
+    // Determine which direction it moved
+    if (currentClk == currentDat) // Counter clockwise
     { 
       enPosition--;
-      if (enPosition < 0) //Check for negative position
+      if (enPosition < 0) // Check for negative position
       {
         enPosition = NUM_KB-1;
       }
     }
-    else //Clockwise
+    else // Clockwise
     { 
       enPosition++;
-      if (enPosition >= NUM_KB) //Check for overflow
+      if (enPosition >= NUM_KB) // Check for overflow
       {
         enPosition = 0;
       }
     }
     
     lastRotation = millis();
-    //Set flag for main loop to change LCD
+    // Set flag for main loop to change LCD
+    // Note: this is done as a flag because long processes shouldn't be done in interrupts
     encChanged = true;
   }  
   
-  //Set to prev to current
+  // Set to prev to current
   prevClk = currentClk;
   prevDat = prevDat;
 }

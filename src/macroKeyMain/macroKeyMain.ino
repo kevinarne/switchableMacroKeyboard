@@ -3,19 +3,18 @@
 #include "keyboards.h"
 
 #define ENA_PIN A1 //Enable pin that disables keyboard output
-#define LCD_SER 10 //Pin for the software serial communication to the LCD panel
+//#define LCD_SER 10 //Pin for the software serial communication to the LCD panel
 
 #define EN_BUT A2  //Button on rotary encoder
-#define EN_CLK 2 //Clock on rotary encoder
+#define EN_CLK 7 //Clock on rotary encoder
 #define EN_DAT A3 //Data on rotary encoder
-#define EN_POS 1 //Number of keyboards to rotate between
 
 #define KEY_DELAY 30 //In millis
 #define EN_DELAY 30 //In millis
 #define SWITCH_DELAY 30 //In millis
 
 
-SoftwareSerial lcdSerial (A0, LCD_SER);  //RX, TX
+//SoftwareSerial lcdSerial (A0, LCD_SER);  //RX, TX
 
 //Need variables to store relevant states for rotary encoder
 
@@ -30,8 +29,8 @@ boolean currentDat = false;
 
 
 //rows and cols are the pins associated with the rows and columns of switches
-int rows[] = {3,7,8,9};
-int cols[] = {4,5,6};
+int rows[] = {10,6,8,9};
+int cols[] = {4,A0,5};
 
 //Keeps track of whether a button has been pressed
 boolean pressed[4][3] = {{false,false,false},
@@ -63,7 +62,7 @@ void setup() {
   }
   //Setup cols as inputs
   for (int i = 0; i < 3; i ++){
-    pinMode(cols[i], OUTPUT);  
+    pinMode(cols[i], INPUT);  
   }
   //Setup ENA_PIN as input
   pinMode(ENA_PIN, INPUT);
@@ -76,12 +75,12 @@ void setup() {
 
   
   //Start software serial with LCDSER
-  lcdSerial.begin(9600);
+  //lcdSerial.begin(9600);
 
   Serial.begin(9600);
   
   //Attach interrupt to ENCLK
-  attachInterrupt(INT1, readEncoder,CHANGE);
+  attachInterrupt(INT4, readEncoder,CHANGE);
   
 }
 
@@ -192,7 +191,7 @@ void readEncoder(){
         enPosition = 0;
       }
     }
-
+    Serial.println(enPosition);
     lastRotation = millis();
   } 
   

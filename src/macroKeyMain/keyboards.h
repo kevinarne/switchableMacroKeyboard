@@ -10,4 +10,6 @@ const String KEYBOARDS[][4][3] = {
                                  {"j","k","l"}}
 };
 
+const String KB_NAMES[] = {"Numbers", "Letters"};
+
 const int NUM_KB = 2; 

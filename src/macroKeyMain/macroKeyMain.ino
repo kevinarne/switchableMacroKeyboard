@@ -193,7 +193,8 @@ void readEncoder(){
     }
     Serial.println(enPosition);
     lastRotation = millis();
-  } 
+    //Send name to LCD using KB_NAMES[enPosition];
+  }  
   
   //Set to prev to current
   prevClk = currentClk;

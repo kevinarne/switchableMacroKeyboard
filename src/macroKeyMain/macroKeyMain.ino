@@ -1,9 +1,12 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 #include <SoftwareSerial.h>
 #include <Keyboard.h>
 #include "keyboards.h"
 
+LiquidCrystal_I2C lcd(0x27,16,2); // set the LCD address to 0x27 for a 16 chars and 2 line display
+
 #define ENA_PIN A1 //Enable pin that disables keyboard output
-//#define LCD_SER 10 //Pin for the software serial communication to the LCD panel
 
 #define EN_BUT A2  //Button on rotary encoder
 #define EN_CLK 7 //Clock on rotary encoder
@@ -13,22 +16,17 @@
 #define EN_DELAY 30 //In millis
 #define SWITCH_DELAY 30 //In millis
 
-
-//SoftwareSerial lcdSerial (A0, LCD_SER);  //RX, TX
-
-//Need variables to store relevant states for rotary encoder
-
+//Rotary encoder global variables
 unsigned long lastSwitch = 0;
 unsigned long lastRotation = 0;
 volatile int enPosition = 0;
 boolean prevClk = false;
 boolean prevDat = false;
-
 boolean currentClk = false;
 boolean currentDat = false;
+boolean encChanged = false;
 
-
-//rows and cols are the pins associated with the rows and columns of switches
+//Pin numbers for the rows and columns in the keyboard
 int rows[] = {10,6,8,9};
 int cols[] = {4,A0,5};
 
@@ -49,37 +47,34 @@ boolean toBeSent[4][3] = {{false,false,false},
                          {false,false,false},
                          {false,false,false},
                          {false,false,false}};
-
-String keys[4][3] = {{"7","8","9"},
-                     {"4","5","6"},
-                     {"1","2","3"},
-                     {"-","0","."}};
-
+                         
 void setup() {
   //Setup rows as outputs
   for (int i = 0; i < 4; i++){
     pinMode(rows[i], OUTPUT);  
   }
-  //Setup cols as inputs
+  // Setup cols as inputs
   for (int i = 0; i < 3; i ++){
     pinMode(cols[i], INPUT);  
   }
-  //Setup ENA_PIN as input
+  // Setup ENA_PIN as input
   pinMode(ENA_PIN, INPUT);
   
-  //Setup EN_BUT as input
+  // Setup EN_BUT as input
   pinMode(EN_BUT, INPUT);
   //Setup EN_CLK and EN_DAT as inputs
   pinMode(EN_CLK, INPUT);
   pinMode(EN_DAT, INPUT);
 
-  
-  //Start software serial with LCDSER
-  //lcdSerial.begin(9600);
+  // Initialize the lcd
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0,0);
+  lcd.print(KB_NAMES[0]);
 
   Serial.begin(9600);
   
-  //Attach interrupt to ENCLK
+  // Attach interrupt to ENCLK
   attachInterrupt(INT4, readEncoder,CHANGE);
   
 }
@@ -95,12 +90,12 @@ void loop() {
     Serial.println("Disabled");
     //Send buttons to serial  
   }
-  //Set buttons to be sent to false
-  
-  //if rotary encoder debouncing done
-    //Check for rotary encoder input
-
-  //Check for millis wrap around (nope, use this: https://arduino.stackexchange.com/questions/12587/how-can-i-handle-the-millis-rollover)
+  if (encChanged)
+  {
+   lcd.clear();
+   lcd.print(KB_NAMES[enPosition]); 
+   encChanged = false;
+  }
 }
 
 void keyboardScan(){
@@ -191,9 +186,10 @@ void readEncoder(){
         enPosition = 0;
       }
     }
-    Serial.println(enPosition);
+    
     lastRotation = millis();
-    //Send name to LCD using KB_NAMES[enPosition];
+    //Set flag for main loop to change LCD
+    encChanged = true;
   }  
   
   //Set to prev to current

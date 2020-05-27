@@ -1,6 +1,5 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
-#include <SoftwareSerial.h>
 #include <Keyboard.h>
 #include "keyboards.h"
 
@@ -101,8 +100,7 @@ void loop()
   }
   if (encChanged)
   {
-    lcd.clear();
-    lcd.print(KB_NAMES[enPosition]); 
+    updateDisplay();
     encChanged = false;
   }
 }
@@ -228,4 +226,10 @@ void readEncoder()
   // Set to prev to current
   prevClk = currentClk;
   prevDat = prevDat;
+}
+
+void updateDisplay()
+{
+  lcd.clear();
+  lcd.print(KB_NAMES[enPosition]); 
 }

@@ -76,8 +76,8 @@ void setup()
   lcd.setCursor(0,0);
   lcd.print(KB_NAMES[0]);
 
-  Serial.begin(9600);
-  
+  //Serial.begin(9600);
+  Keyboard.begin();
   // Attach interrupt to ENCLK
   attachInterrupt(INT4, readEncoder, CHANGE);
 }
@@ -95,7 +95,7 @@ void loop()
   } 
   else 
   {
-    Serial.println("Disabled");
+    //Serial.println("Disabled");
     // Send buttons to serial?  
   }
   if (encChanged)
@@ -140,6 +140,8 @@ void keyboardScan()
         { 
             // timeExpired is true if enough time has passed since the last pressing
             // Or if the clock has reset
+            // This is suspect and hasn't been tested for clock reset
+            
             boolean timeExpired = !(millis()-lastPressed[r][c] < KEY_DELAY);
             
             if (timeExpired) // Enough time has elapsed since it was pressed
@@ -166,8 +168,17 @@ void sendKeys()
     {
       if (toBeSent[r][c])
       {
-        Serial.println(KEYBOARDS[enPosition][r][c]);
-        toBeSent[r][c] = false;
+        if (!containsModifiers(KEYBOARDS[enPosition][r][c])) // String is plain text
+        {
+          String message = KEYBOARDS[enPosition][r][c];
+          Keyboard.print(message);
+          toBeSent[r][c] = false;
+        }
+        else // String involves modifier keys
+        {
+          handleModifiers(KEYBOARDS[enPosition][r][c]);
+          toBeSent[r][c] = false;
+        }
       }  
     }  
   }  
@@ -232,4 +243,58 @@ void updateDisplay()
 {
   lcd.clear();
   lcd.print(KB_NAMES[enPosition]); 
+}
+
+
+// Checks to see whether the String contains modifier characters
+boolean containsModifiers(String testString)
+{
+  if (testString.indexOf('&') == 3)
+  {
+    return true;
+  }
+  return false;
+}
+
+void handleModifiers(String values)
+{
+  String commands = values;
+  if (!containsModifiers(commands))
+  {
+    return;
+  }    
+  // Check for a lacking last &, not terribly elegant
+  if (commands[commands.length()] - 1 != '&')
+  {
+    commands = commands + '&';  
+  }
+
+  // Run while there are still numbers in the String
+  while (commands.length() > 0)
+  {
+    int commaIndex = commands.indexOf('&');
+    // Check whether the index was found (nonnegative)
+    if (commaIndex > 0)
+    {
+      // Find first comma and pull out the number from the substring
+      int number = commands.substring(0,commaIndex).toInt();
+      if (number < 256 && number > -1)
+      {
+        // Do the thing with the number
+        //Serial.print("Popped number  ");
+        //Serial.println(number);
+        Keyboard.press(number);
+      }
+      // Remove the previous number in the String
+      commands = commands.substring(commaIndex+1,commands.length());
+    }
+    else 
+    {
+      break;
+    }
+    //Serial.println(commands);
+  }
+  
+  //Serial.println("Done");
+   Keyboard.releaseAll();
 }

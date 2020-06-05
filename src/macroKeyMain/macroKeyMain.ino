@@ -281,8 +281,6 @@ void handleModifiers(String values)
       if (number < 256 && number > -1)
       {
         // Do the thing with the number
-        //Serial.print("Popped number  ");
-        //Serial.println(number);
         Keyboard.press(number);
       }
       // Remove the previous number in the String
@@ -292,9 +290,6 @@ void handleModifiers(String values)
     {
       break;
     }
-    //Serial.println(commands);
   }
-  
-  //Serial.println("Done");
-   Keyboard.releaseAll();
+  Keyboard.releaseAll();
 }

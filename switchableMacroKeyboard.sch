@@ -439,15 +439,15 @@ You are welcome to use this library for commercial purposes. For attribution, we
 <pad name="P$7" x="6.6" y="0" drill="3.25"/>
 </package>
 <package name="CHERRYMXBLUE">
-<circle x="0" y="0" radius="1.9939" width="0.127" layer="20"/>
-<circle x="-5.08" y="0" radius="0.8509" width="0.127" layer="20"/>
-<circle x="5.08" y="0" radius="0.8509" width="0.127" layer="20"/>
 <pad name="P$1" x="-3.81" y="2.54" drill="0.7493"/>
 <pad name="P$2" x="2.54" y="5.08" drill="0.7493"/>
 <wire x1="-7.747" y1="-7.747" x2="-7.747" y2="7.747" width="0.127" layer="51"/>
 <wire x1="-7.747" y1="7.747" x2="7.747" y2="7.747" width="0.127" layer="51"/>
 <wire x1="7.747" y1="7.747" x2="7.747" y2="-7.747" width="0.127" layer="51"/>
 <wire x1="7.747" y1="-7.747" x2="-7.747" y2="-7.747" width="0.127" layer="51"/>
+<hole x="0" y="0" drill="3.9878"/>
+<hole x="5.08" y="0" drill="1.7018"/>
+<hole x="-5.08" y="0" drill="1.7018"/>
 </package>
 </packages>
 <symbols>

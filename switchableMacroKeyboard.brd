@@ -1394,8 +1394,8 @@ type 0207, grid 10 mm</description>
 <pad name="P$7" x="6.6" y="0" drill="3.25"/>
 </package>
 <package name="CHERRYMXBLUE">
-<pad name="P$1" x="-3.81" y="2.54" drill="0.7493"/>
-<pad name="P$2" x="2.54" y="5.08" drill="0.7493"/>
+<pad name="P$1" x="-3.81" y="2.54" drill="1.524"/>
+<pad name="P$2" x="2.54" y="5.08" drill="1.524"/>
 <wire x1="-7.747" y1="-7.747" x2="-7.747" y2="7.747" width="0.127" layer="51"/>
 <wire x1="-7.747" y1="7.747" x2="7.747" y2="7.747" width="0.127" layer="51"/>
 <wire x1="7.747" y1="7.747" x2="7.747" y2="-7.747" width="0.127" layer="51"/>

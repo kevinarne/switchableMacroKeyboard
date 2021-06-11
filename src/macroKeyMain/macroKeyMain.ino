@@ -2,6 +2,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <Keyboard.h>
 #include "keyboards.h"
+#include "MacroKeyboard.h"
 
 LiquidCrystal_I2C lcd(0x27,16,2); // set the LCD address to 0x27 for a 16 chars and 2 line display
 
@@ -46,26 +47,27 @@ boolean toBeSent[4][3] = {{false,false,false},
                          {false,false,false},
                          {false,false,false},
                          {false,false,false}};
-                         
-void setup() 
+
+void setup()
 {
+  MacroKeyboard board = MacroKeyboard();
   // Setup rows as outputs
   for (int i = 0; i < 4; i++)
   {
-    pinMode(rows[i], OUTPUT);  
+    pinMode(rows[i], OUTPUT);
   }
   // Setup cols as inputs
   for (int i = 0; i < 3; i ++)
   {
-    pinMode(cols[i], INPUT);  
+    pinMode(cols[i], INPUT);
   }
-  
+
   // Setup ENA_PIN as input
   pinMode(ENA_PIN, INPUT);
-  
+
   // Setup EN_BUT as input
   pinMode(EN_BUT, INPUT);
-  
+
   //Setup EN_CLK and EN_DAT as inputs
   pinMode(EN_CLK, INPUT);
   pinMode(EN_DAT, INPUT);
@@ -82,7 +84,7 @@ void setup()
   attachInterrupt(INT4, readEncoder, CHANGE);
 }
 
-void loop() 
+void loop()
 {
   // Scan for keyboard inputs
   keyboardScan();
@@ -91,12 +93,12 @@ void loop()
   if (enabled)
   {
     // Send buttons to be sent to keyboard
-    sendKeys();  
-  } 
-  else 
+    sendKeys();
+  }
+  else
   {
     //Serial.println("Disabled");
-    // Send buttons to serial?  
+    // Send buttons to serial?
   }
   if (encChanged)
   {
@@ -123,9 +125,9 @@ void keyboardScan()
         if (pressed[r][c]) // If button previously pressed
         {
           // Don't update last pressed
-        } 
-        else // Button was not previously pressed 
-        { 
+        }
+        else // Button was not previously pressed
+        {
           // Set pressed to true
           pressed[r][c] = true;
           // Set last pressed to millis()
@@ -137,20 +139,20 @@ void keyboardScan()
       else // The button is not pressed
       {
         if (pressed[r][c]) // Button was previously pressed
-        { 
+        {
             // timeExpired is true if enough time has passed since the last pressing
             // Or if the clock has reset
             // This is suspect and hasn't been tested for clock reset
-            
+
             boolean timeExpired = !(millis()-lastPressed[r][c] < KEY_DELAY);
-            
+
             if (timeExpired) // Enough time has elapsed since it was pressed
-            { 
+            {
               // Set the pressed value back to false
               pressed[r][c] = false;
             }
          }
-      }            
+      }
     }
     // Set row to low
     digitalWrite(rows[r], LOW);
@@ -179,9 +181,9 @@ void sendKeys()
           handleModifiers(KEYBOARDS[enPosition][r][c]);
           toBeSent[r][c] = false;
         }
-      }  
-    }  
-  }  
+      }
+    }
+  }
 }
 
 // This function outputs the pressed matrix to the Serial port
@@ -195,8 +197,8 @@ void printMatrixSerial()
     {
       Serial.print(pressed[r][c]);
       Serial.print("  ");
-    } 
-    Serial.println(""); 
+    }
+    Serial.println("");
   }
 }
 
@@ -206,13 +208,13 @@ void readEncoder()
   // Read values
   currentClk = digitalRead(EN_CLK);
   currentDat = digitalRead(EN_DAT);
-  
+
   // Check last switched time
   if (!(millis() - lastRotation < EN_DELAY) && currentClk)
   {
     // Determine which direction it moved
     if (currentClk == currentDat) // Counter clockwise
-    { 
+    {
       enPosition--;
       if (enPosition < 0) // Check for negative position
       {
@@ -220,20 +222,20 @@ void readEncoder()
       }
     }
     else // Clockwise
-    { 
+    {
       enPosition++;
       if (enPosition >= NUM_KB) // Check for overflow
       {
         enPosition = 0;
       }
     }
-    
+
     lastRotation = millis();
     // Set flag for main loop to change LCD
     // Note: this is done as a flag because long processes shouldn't be done in interrupts
     encChanged = true;
-  }  
-  
+  }
+
   // Set to prev to current
   prevClk = currentClk;
   prevDat = prevDat;
@@ -242,7 +244,7 @@ void readEncoder()
 void updateDisplay()
 {
   lcd.clear();
-  lcd.print(KB_NAMES[enPosition]); 
+  lcd.print(KB_NAMES[enPosition]);
 }
 
 
@@ -262,11 +264,11 @@ void handleModifiers(String values)
   if (!containsModifiers(commands))
   {
     return;
-  }    
+  }
   // Check for a lacking last &, not terribly elegant
   if (commands[commands.length()] - 1 != '&')
   {
-    commands = commands + '&';  
+    commands = commands + '&';
   }
 
   // Run while there are still numbers in the String
@@ -286,7 +288,7 @@ void handleModifiers(String values)
       // Remove the previous number in the String
       commands = commands.substring(commaIndex+1,commands.length());
     }
-    else 
+    else
     {
       break;
     }

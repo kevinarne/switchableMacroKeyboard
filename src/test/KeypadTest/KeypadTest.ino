@@ -1,8 +1,8 @@
 #define KEY_DELAY 30 //In millis
 
 // Rows and cols are the pins associated with the rows and columns of switches
-int rows[] = {3,7,8,9};
-int cols[] = {4,5,6};
+int rows[] = {10,6,8,9};
+int cols[] = {4,A0,5};
 
 // Keeps track of whether a button has been pressed
 boolean pressed[4][3] = {{false,false,false},

@@ -1,18 +1,16 @@
 // Testing for the rotary encoder dial and switch
 // Valuable resource for understanding rotary encoders: https://lastminuteengineers.com/rotary-encoder-arduino-tutorial/
 
-#define EN_BUT A2 // Button on rotary encoder
 #define EN_CLK 7 // Clock on rotary encoder
 #define EN_DAT A3 // Data on rotary encoder
-#define EN_POS 3 // Number of keyboards to rotate between
 
 #define EN_DELAY 50 // In millis
-#define SWITCH_DELAY 30 // In millis
 
-unsigned long lastSwitch = 0;
 unsigned long lastRotation = 0;
 
 volatile int enPosition = 0;
+
+boolean posChanged = false;
 
 boolean prevClk = false;
 boolean prevDat = false;
@@ -34,7 +32,11 @@ void setup()
 
 void loop() 
 {
-  Serial.println(enPosition);
+  if(posChanged)
+  {
+    Serial.println(enPosition);
+    posChanged = false;
+  }
 }
 
 // Function for the interrupt
@@ -47,6 +49,7 @@ void readEncoder()
   // Check last switched time
   if (!(millis() - lastRotation < EN_DELAY) && currentClk)
   {
+    posChanged = true;
     // Determine which direction it moved
     if (currentClk == currentDat) // Counter clockwise
     { 

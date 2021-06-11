@@ -15,6 +15,13 @@ At the moment, the code only supports sending static strings, like "Hooray" or "
 * Micro USB cable
 * Custom PCB (see gerber.zip)
 
+# Next Steps
+* Encapsulate keyboard logic in an object
+* Add long-press detection to keyboard and rotary encoder
+* Add screen animations
+* Create scripting language for complicated key sequences
+* Remove old LCD code
+
 # Programming
 To program using the Arduino environment, make sure to set your board to Arduino Leonardo. There are several test sketches in the src/test folder that you can use to test individual components in isolation, but the main sketch is in the src/macroKeyMain folder along with the keyboards.h file that contains the different macro keyboards to be loaded.
 

@@ -1,0 +1,14 @@
+ignore
+kiCad/fp-info-cache
+kiCad/fp-lib-table
+kiCad/keyboardLib.dcm
+kiCad/keyboardLib.pretty/ProMicro.kicad_mod
+kiCad/keyboardLib.pretty/cherryMX.kicad_mod
+kiCad/keyboardLib.pretty/thinOLED.kicad_mod
+kiCad/kiCad-cache.lib
+kiCad/kiCad.kicad_pcb-bak
+kiCad/kiCad.pro
+kiCad/kiCad.sch-bak
+kiCad/logo.kicad_mod
+kiCad/logo.png
+kiCad/sym-lib-table
